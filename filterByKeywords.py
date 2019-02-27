@@ -1,4 +1,4 @@
-import json, os
+import bz2, json, os
 
 RAW_DATA_DIR = 'raw-data'
 FILTERED_DATA_DIR = 'filtered-data'
@@ -9,11 +9,11 @@ def error(errorMsg):
     print(f'ERROR: {errorMsg}')
     exit()
 
-def getJSONFileNames(dir):
-    '''Return filenames with the .jsonl file extension in given directory dir.
+def getBZ2FileNames(dir):
+    '''Return filenames with the .bz2.jsonl file extension in given directory dir.
     
     Assumes dir exists.'''
-    return list(filter(lambda fln: fln.endswith('.jsonl'), os.listdir(dir)))
+    return list(filter(lambda fln: fln.endswith('.jsonl.bz2'), os.listdir(dir)))
 
 def preprocess(txt):
     '''Preprocess txt to make searching word easier.
@@ -36,13 +36,24 @@ def filterJSON(jsonArticle):
             return True
     return False
 
-def filterFile(inputFile, outputFile):
-    '''Reads data from inputFile, filters it and writes to outputFile.
-    
-    Each line of the file must be a properly formed JSON Object, representing an article.'''
-    for line in inputFile:
-        if filterJSON(line):
-            outputFile.write(line + '\n')
+def filterBZ2File(fileName):
+    inpath = os.path.join(RAW_DATA_DIR, fileName)
+    outpath = os.path.join(FILTERED_DATA_DIR, fileName)
+    print(f'Decompressing file {inpath}... ', end = '')
+    with bz2.BZ2File(inpath) as inputBZ2File:
+        rawText = inputBZ2File.read().decode('utf-8')
+        print('done.')
+
+        print(f'Filtering articles... ', end = '')
+        articles = filter(lambda line: line != '', rawText.split('\n'))
+        filtered = filter(filterJSON, articles)
+        print(f'done.')
+
+        print(f'Writing results to {outpath}... ', end = '')
+        with bz2.BZ2File(os.path.join(FILTERED_DATA_DIR, fileName), mode = 'w') as outputBZ2File:
+            encoded = '\n'.join(filtered).encode('utf-8')
+            outputBZ2File.write(encoded)
+            print('done.\n')
 
 # Verify directories exist
 thisDir = os.listdir('.')
@@ -52,14 +63,10 @@ if FILTERED_DATA_DIR not in thisDir:
     error(f'Directory {FILTERED_DATA_DIR} not found.')
 
 # Get filenames
-JSONFileNames = getJSONFileNames(RAW_DATA_DIR)
-if JSONFileNames == []:
+BZ2FileNames = getBZ2FileNames(RAW_DATA_DIR)
+if BZ2FileNames == []:
     print(f'No .jsonl files found in directory {RAW_DATA_DIR}')
 
 # Filter files
-for fileName in JSONFileNames:
-    with open(RAW_DATA_DIR + '/' + fileName, 'r') as inputFile:
-        print(f'Filtering file {fileName}... ', end = '')
-        with open(FILTERED_DATA_DIR + '/' + fileName, 'w') as outputFile:
-            filterFile(inputFile, outputFile)
-        print('done.')
+for fileName in BZ2FileNames:
+    filterBZ2File(fileName)
