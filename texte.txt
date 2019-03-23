@@ -1,0 +1,85 @@
+Médiatisation de la guerre du Vietnam dans la presse romande
+Partie 2 : Méthodologie
+
+
+Logiciels et Outils utilisés:
+
+Afin d’analyser les articles du journal de Genève et de la Gazette de Lausanne concernant la guerre du Vietnam, nous avons besoin de convertir les données de type JSON téléchargées depuis la base de données en fichier .txt sur lesquelles nous effectuons des analyse textuelles à l’aide du logiciel Iramuteq, ce logiciel effectue une analyse multidimensionnelle du texte donné et permet d’en tirer des visualisations graphiques facilitant l'interprétation des données. Afin d’effectuer la conversion des données ainsi que le filtrage, nous utilisons le langage Python avec lequel il est pratique de manipuler différentes structures de données.
+
+Filtrage des données
+
+Les données téléchargées depuis DHlab sont initialement en format JSONL, c’est à dire qu’elles contiennent une liste de structures JSON représentant chacunes un article, tout en indiquant son numéro d’identification (id), format, date, titre et son contenu. Etant donné que le logiciel utilisé pour l’analyse textuelle accepte seulement des fichiers .txt, nous filtrons les articles qui nous intéressent et regroupons tous les contenus des articles en un fichier .txt. 
+
+Afin de se focaliser seulement sur les articles qui nous concerne, nous effectuons plusieurs filtres différents par rapport aux dates, ainsi qu’aux mots qui apparaissent dans l’article. Nous listons et décrivons ci-dessous les différentes méthodes de filtrage que nous utilisons:
+
+Par période : c’est à dire que nous gardons seulement les articles rédigés pendant une période historique spécifiée.
+
+Par contenance de mot : nous définissons une liste de mots[1] et gardons seulement les articles contenant tous les mots d’une liste donnée. 
+
+(Dû aux limites des logiciels utilisés, nous sommes contraint de séparer certains fichiers produits après le filtrage en plusieurs fichier avant d’effectuer l’importation dans Iramuteq)
+
+Le premier filtrage utilisé consiste en gardant seulement les articles datés de 1955 à 1975 (c’est à dire pendant la période officielle de la guerre du Vietnam) contenant au moins une fois le mot Vietnam. Ce filtrage est donc le corpus principal que nous utilisons pour l’analyse. 
+Ensuite, nous obtenons plusieurs sous-corpus à partir de ce dernier :
+
+Premièrement, nous établissons une liste de mots avec lesquels nous effectuons des filtres additionnels à partir du corpus principal : 
+
+[Accords de Genève, Pentagone, Têt, Paris, guerilla, communisme, communiste, front national de libération, napalm, massacre, mobe, université de Kent, Dome, offensive de pâques, pourparler][1]
+
+Par exemple, parmis les articles contenant le mot vietnam nous gardons seulement les articles contenant aussi le mot “Communisme” ou “Napalm”. Cela nous permet de nous focaliser sur des articles plus spécifiques, et d’organiser nos filtres par rapport à différents thèmes ou événements. [3]
+
+
+Deuxièmement, nous classifions les articles contenant le mot Vietnam par périodes que nous avons définies à l’aide du travail fourni au premier semestre : 
+
+
+Dates des Articles
+Période concernée
+1955-1963
+Regime de Diem
+1951-1969
+Epoque de Ho Chi Minh
+1964-1973
+USA dans la guerre du Vietnam
+1970-1973
+Retrait des USA
+1959-1965
+Période de guerre entre Le Nord et le Sud
+
+
+Finalement, afin de compléter nos sous-corpus, nous filtrons notre corpus principal par période et par articles contenant le nom des présidents américains y étant associés : 
+
+
+Dates des Articles
+Contenant au moins une fois le nom 
+1954-1961
+Eisenhower
+1961-1963
+Kennedy
+1963-1969
+Johnson
+1969-1974
+Nixon
+1974-1975
+Ford
+
+
+Note : Dû à l’automatisation du filtrage, il est possible que beaucoup d’article concernant le sujet recherché ne soit pas pris en compte dans notre corpus (à cause du mot Vietnam n’y figurant pas), une solution à ce problème serait d’étendre le corpus en acceptant plus de mots dans le filtrage, cependant cela a pour risque d’ajouter beaucoup d’articles qui ne sont pas forcément relié à notre recherche et qui pourraient biaiser nos résultats.
+
+
+Analyse Lexicographique
+
+Comme mentionné au dessus, nous effectuons une analyse lexicographique automatisée en utilisant le logiciel Iramuteq, cela nous permet d’obtenir différentes classes de mots pour un texte donné en entrée, qui sont générées en calculant le niveau d’associations des mots par rapport à des segments de texte, ce qui permet de classifier entre autre les mots qui ne sont pas utiles à l’analyse (par exemple, les déterminants, conjonctions, pronoms et prépositions)  [4] .
+
+
+
+ Après avoir obtenu les différentes classes, nous pouvons générer des nuages de mots, mettant en évidence la fréquence des mots par classe, ainsi que générer des graphes qui permettent de visualiser les cooccurrences de mots entre eux. 
+
+
+
+
+
+
+Ces résultats nous donnent la possibilité de visualiser et d'interpréter les données avec aisance. Par exemple, la classification produit souvent des classes que l’on peut facilement mettre en relation avec certains aspects de la médiatisation, par exemple nous remarquons des classes qui contiennent des mots relié à la militarisation comme d’autres classes reliées à la politique et la diplomatie ou encore à la géographie.
+
+
+Finalement, après une première interprétation, nous extractons la classe qui nous intéresse le plus pour notre analyse et répétons le processus afin d’obtenir des sous-classes à celle-ci.
+
